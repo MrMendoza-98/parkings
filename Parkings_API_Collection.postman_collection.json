@@ -1,0 +1,1081 @@
+{
+	"info": {
+		"_postman_id": "parkings-api-collection",
+		"name": "Parkings Management API",
+		"description": "Colección completa de endpoints para el sistema de gestión de parqueaderos con autenticación JWT, roles ADMIN/SOCIO, y funcionalidades completas.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "parkings-system"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login - Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const responseJson = pm.response.json();",
+									"    pm.environment.set('authToken', responseJson.token);",
+									"    pm.environment.set('userId', responseJson.user.id);",
+									"    pm.environment.set('userEmail', responseJson.user.email);",
+									"    pm.environment.set('userRole', responseJson.user.role);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@mail.com\",\n    \"password\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Autenticación de usuario ADMIN. Guarda automáticamente el token JWT en variables de entorno."
+					},
+					"response": [
+						{
+							"name": "Login Exitoso",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"admin@admin.com\",\n    \"password\": \"admin\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/auth/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"expirationTime\": 21600,\n    \"user\": {\n        \"id\": 1,\n        \"email\": \"admin@parkings.com\",\n        \"role\": \"ADMIN\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Login - Socio",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"m.mendoza@nelumbo.com.co\",\n    \"password\": \"123Socio\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Autenticación de usuario SOCIO (propietario de parqueadero)."
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Cierra sesión y revoca el token JWT actual."
+					}
+				}
+			],
+			"description": "Endpoints de autenticación con JWT. Incluye login para ADMIN y SOCIO, y logout con revocación de token."
+		},
+		{
+			"name": "Users Management",
+			"item": [
+				{
+					"name": "Get All Users (Admin Only)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Obtiene todos los usuarios del sistema. Solo accesible por ADMIN."
+					},
+					"response": [
+						{
+							"name": "Users List",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/users",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"email\": \"admin@admin.com\",\n        \"role\": \"ADMIN\"\n    },\n    {\n        \"id\": 2,\n        \"email\": \"m.mendoza@nelumbo.com.co\",\n        \"role\": \"SOCIO\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						},
+						"description": "Obtiene un usuario específico por ID."
+					}
+				},
+				{
+					"name": "Create User (Admin Only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"nuevo.socio@nelumbo.com.co\",\n    \"password\": \"123Socio\",\n    \"role\": \"SOCIO\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Crea un nuevo usuario. Solo ADMIN puede crear usuarios."
+					}
+				},
+				{
+					"name": "Update User (Admin Only)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"socio.actualizado@parkings.com\",\n    \"password\": \"123Socio\",\n    \"role\": \"SOCIO\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"2"
+							]
+						},
+						"description": "Actualiza un usuario existente. Solo ADMIN puede actualizar usuarios."
+					}
+				},
+				{
+					"name": "Delete User (Admin Only)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"3"
+							]
+						},
+						"description": "Elimina un usuario. VALIDACIÓN: No se puede eliminar si tiene parqueaderos asociados."
+					},
+					"response": [
+						{
+							"name": "Error - Usuario con parqueaderos",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/users/2",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										"2"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"error\": \"Operación no permitida\",\n    \"message\": \"No se puede eliminar el usuario con ID 2. Tiene 3 parqueadero(s) asociado(s). Primero debe eliminar o transferir los parqueaderos.\",\n    \"timestamp\": \"2025-10-08T15:30:45\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Gestión completa de usuarios con validaciones de negocio. Solo ADMIN puede gestionar usuarios."
+		},
+		{
+			"name": "Parkings Management",
+			"item": [
+				{
+					"name": "Get All Parkings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/parkings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parkings"
+							]
+						},
+						"description": "Obtiene todos los parqueaderos. ADMIN ve todos, SOCIO ve solo los suyos."
+					},
+					"response": [
+						{
+							"name": "Parkings List",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/parkings",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"parkings"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Parqueadero Centro\",\n        \"capacity\": 50,\n        \"pricePerHour\": 3500.0,\n        \"owner\": {\n            \"id\": 2,\n            \"email\": \"socio@nelumbo.com.co\",\n            \"role\": \"SOCIO\"\n        }\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Get Parking by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/parkings/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parkings",
+								"1"
+							]
+						},
+						"description": "Obtiene un parqueadero específico. Validación de propiedad para SOCIO."
+					}
+				},
+				{
+					"name": "Create Parking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Parqueadero Nuevo\",\n    \"capacity\": 30,\n    \"pricePerHour\": 4000.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/parkings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parkings"
+							]
+						},
+						"description": "Crea un nuevo parqueadero. El owner se asigna automáticamente al usuario autenticado."
+					}
+				},
+				{
+					"name": "Update Parking",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Parqueadero Centro Actualizado\",\n    \"capacity\": 60,\n    \"pricePerHour\": 3800.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/parkings/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parkings",
+								"1"
+							]
+						},
+						"description": "Actualiza un parqueadero. VALIDACIÓN: No se puede reducir capacidad si hay vehículos activos."
+					},
+					"response": [
+						{
+							"name": "Error - Capacidad insuficiente",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Parqueadero Centro\",\n    \"capacity\": 10,\n    \"pricePerHour\": 3500.0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/parkings/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"parkings",
+										"1"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"error\": \"Operación no permitida\",\n    \"message\": \"No se puede reducir la capacidad a 10. Hay 25 vehículos actualmente parqueados. La nueva capacidad debe ser mayor o igual a 25\",\n    \"timestamp\": \"2025-10-08T15:30:45\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Parking",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/parkings/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"parkings",
+								"1"
+							]
+						},
+						"description": "Elimina un parqueadero. VALIDACIÓN: No se puede eliminar si tiene registros históricos."
+					}
+				}
+			],
+			"description": "Gestión completa de parqueaderos con validaciones de negocio y control de propiedad."
+		},
+		{
+			"name": "Vehicles Management",
+			"item": [
+				{
+					"name": "Register Vehicle Entry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"plate\": \"ABC123\",\n    \"parkingId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/register-entry",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"register-entry"
+							]
+						},
+						"description": "Registra la entrada de un vehículo al parqueadero. Crea el vehículo si no existe."
+					},
+					"response": [
+						{
+							"name": "Entry Registered Successfully",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"plate\": \"ABC123\",\n    \"parkingId\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vehicles/register-entry",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vehicles",
+										"register-entry"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"id\": 15,\n    \"vehicleId\": {\n        \"id\": 5,\n        \"plate\": \"ABC123\"\n    },\n    \"parkingId\": {\n        \"id\": 1,\n        \"name\": \"Parqueadero Centro\"\n    },\n    \"entryTime\": \"2025-10-08T15:30:45\",\n    \"exitTime\": null,\n    \"totalPrice\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Register Vehicle Exit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"plate\": \"ABC123\",\n    \"parkingId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/register-exit",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"register-exit"
+							]
+						},
+						"description": "Registra la salida de un vehículo y calcula el precio total basado en tiempo y tarifa."
+					},
+					"response": [
+						{
+							"name": "Exit Registered Successfully",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"plate\": \"ABC123\",\n    \"parkingId\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/vehicles/register-exit",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"vehicles",
+										"register-exit"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"id\": 15,\n    \"vehicleId\": {\n        \"id\": 5,\n        \"plate\": \"ABC123\"\n    },\n    \"parkingId\": {\n        \"id\": 1,\n        \"name\": \"Parqueadero Centro\"\n    },\n    \"entryTime\": \"2025-10-08T15:30:45\",\n    \"exitTime\": \"2025-10-08T18:45:30\",\n    \"totalPrice\": 11375.0\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Parked Vehicles by Parking",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/parked/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"parked",
+								"1"
+							]
+						},
+						"description": "Obtiene todos los vehículos actualmente parqueados en un parqueadero específico."
+					}
+				},
+				{
+					"name": "Get Vehicle Info by Plate",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/info/ABC123",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"info",
+								"ABC123"
+							]
+						},
+						"description": "Obtiene información de un vehículo por su placa."
+					}
+				},
+				{
+					"name": "Validate Vehicle in Parking",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/validate/ABC123/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"validate",
+								"ABC123",
+								"1"
+							]
+						},
+						"description": "Valida si un vehículo está actualmente parqueado en un parqueadero específico."
+					}
+				}
+			],
+			"description": "Gestión completa de vehículos: entrada, salida, consultas y validaciones."
+		},
+		{
+			"name": "Indicators & Analytics",
+			"item": [
+				{
+					"name": "Top 10 Most Frequent Vehicles (All Parkings)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/indicators/top-vehicles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"indicators",
+								"top-vehicles"
+							]
+						},
+						"description": "Obtiene los 10 vehículos más frecuentes en todos los parqueaderos con estadísticas."
+					},
+					"response": [
+						{
+							"name": "Top Vehicles Response",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/indicators/top-vehicles",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"indicators",
+										"top-vehicles"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"vehicles\": [\n        {\n            \"plate\": \"ABC123\",\n            \"parkingId\": 1,\n            \"count\": 15\n        },\n        {\n            \"plate\": \"XYZ789\",\n            \"parkingId\": 1,\n            \"count\": 12\n        }\n    ],\n    \"totalVehicles\": 10,\n    \"summary\": {\n        \"totalRegistrations\": 87,\n        \"averageRegistrations\": 8.7,\n        \"mostFrequentPlate\": \"ABC123\",\n        \"mostFrequentParkingId\": 1,\n        \"mostFrequentCount\": 15\n    },\n    \"generatedAt\": \"2025-10-08T15:30:45\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Top 10 Most Frequent Vehicles by Parking",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/indicators/top-vehicles/parking/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"indicators",
+								"top-vehicles",
+								"parking",
+								"1"
+							]
+						},
+						"description": "Obtiene los 10 vehículos más frecuentes en un parqueadero específico."
+					}
+				},
+				{
+					"name": "First Time Parked Vehicles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/indicators/first-time-vehicles/parking/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"indicators",
+								"first-time-vehicles",
+								"parking",
+								"1"
+							]
+						},
+						"description": "Obtiene vehículos que se han parqueado por primera vez en un parqueadero."
+					},
+					"response": [
+						{
+							"name": "First Time Vehicles",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/indicators/first-time-vehicles/parking/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"indicators",
+										"first-time-vehicles",
+										"parking",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "[\n    {\n        \"plate\": \"NEW123\",\n        \"firstEntryTime\": \"2025-10-08T15:30:45\"\n    },\n    {\n        \"plate\": \"FRS456\",\n        \"firstEntryTime\": \"2025-10-08T14:20:30\"\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "Parking Earnings (SOCIO Only)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/indicators/earnings/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"indicators",
+								"earnings",
+								"1"
+							]
+						},
+						"description": "Obtiene las ganancias de un parqueadero por día, semana, mes y año. Solo SOCIO propietario."
+					},
+					"response": [
+						{
+							"name": "Parking Earnings",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/indicators/earnings/1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"indicators",
+										"earnings",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "{\n    \"today\": 85750.0,\n    \"week\": 567300.0,\n    \"month\": 2890450.0,\n    \"year\": 15670890.0\n}"
+						}
+					]
+				},
+				{
+					"name": "Search Parked Vehicles by Partial Plate",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/indicators/search-vehicles?partialPlate=ABC",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"indicators",
+								"search-vehicles"
+							],
+							"query": [
+								{
+									"key": "partialPlate",
+									"value": "ABC"
+								}
+							]
+						},
+						"description": "Busca vehículos actualmente parqueados que coincidan con un fragmento de placa."
+					},
+					"response": [
+						{
+							"name": "Search Results",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{authToken}}"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/indicators/search-vehicles?partialPlate=ABC",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"indicators",
+										"search-vehicles"
+									],
+									"query": [
+										{
+											"key": "partialPlate",
+											"value": "ABC"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [],
+							"cookie": [],
+							"body": "[\n    {\n        \"plate\": \"ABC123\",\n        \"entryTime\": \"2025-10-08T15:30:45\",\n        \"parkingId\": 1\n    },\n    {\n        \"plate\": \"ABC789\",\n        \"entryTime\": \"2025-10-08T14:15:20\",\n        \"parkingId\": 2\n    }\n]"
+						}
+					]
+				}
+			],
+			"description": "Endpoints de indicadores y analíticas con estadísticas avanzadas y reportes de ganancias."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userEmail",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userRole",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
