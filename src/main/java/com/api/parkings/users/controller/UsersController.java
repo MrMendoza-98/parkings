@@ -65,8 +65,8 @@ public class UsersController {
         if (existingUser == null) {
             throw new ResourceNotFoundException("User not found");
         }
-        
-        userMapper.updateEntityFromDTO(existingUser, userUpdateDTO);
+
+        userMapper.updateEntityFromDTO(userUpdateDTO, existingUser);
         Users updatedUser = usersService.updateUser(id, existingUser);
         return userMapper.toResponseDTO(updatedUser);
     }

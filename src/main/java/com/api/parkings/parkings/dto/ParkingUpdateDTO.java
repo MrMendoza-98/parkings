@@ -17,5 +17,5 @@ public class ParkingUpdateDTO {
     private Double pricePerHour;
     
     @UserExists(message = "El propietario no existe en la base de datos")
-    private Integer ownerId;
+    private Integer owner;
 }
