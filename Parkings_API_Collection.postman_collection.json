@@ -100,7 +100,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"m.mendoza@nelumbo.com.co\",\n    \"password\": \"123Socio\"\n}"
+							"raw": "{\n    \"email\": \"socio@mail.com.co\",\n    \"password\": \"123Socio\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/auth/login",
@@ -191,7 +191,7 @@
 							"_postman_previewlanguage": "json",
 							"header": [],
 							"cookie": [],
-							"body": "[\n    {\n        \"id\": 1,\n        \"email\": \"admin@admin.com\",\n        \"role\": \"ADMIN\"\n    },\n    {\n        \"id\": 2,\n        \"email\": \"m.mendoza@nelumbo.com.co\",\n        \"role\": \"SOCIO\"\n    }\n]"
+							"body": "[\n    {\n        \"id\": 1,\n        \"email\": \"admin@admin.com\",\n        \"role\": \"ADMIN\"\n    },\n    {\n        \"id\": 2,\n        \"email\": \"socio@mail.com.co\",\n        \"role\": \"SOCIO\"\n    }\n]"
 						}
 					]
 				},
@@ -234,7 +234,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"nuevo.socio@nelumbo.com.co\",\n    \"password\": \"123Socio\",\n    \"role\": \"SOCIO\"\n}"
+							"raw": "{\n    \"email\": \"nuevo.socio@mail.com.co\",\n    \"password\": \"123Socio\",\n    \"role\": \"SOCIO\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/users",
@@ -385,7 +385,7 @@
 							"_postman_previewlanguage": "json",
 							"header": [],
 							"cookie": [],
-							"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Parqueadero Centro\",\n        \"capacity\": 50,\n        \"pricePerHour\": 3500.0,\n        \"owner\": {\n            \"id\": 2,\n            \"email\": \"socio@nelumbo.com.co\",\n            \"role\": \"SOCIO\"\n        }\n    }\n]"
+							"body": "[\n    {\n        \"id\": 1,\n        \"name\": \"Parqueadero Centro\",\n        \"capacity\": 50,\n        \"pricePerHour\": 3500.0,\n        \"owner\": {\n            \"id\": 2,\n            \"email\": \"socio@mail.com.co\",\n            \"role\": \"SOCIO\"\n        }\n    }\n]"
 						}
 					]
 				},
